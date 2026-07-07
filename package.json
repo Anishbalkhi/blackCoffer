@@ -1,0 +1,20 @@
+{
+  "name": "blackcoffer-dashboard",
+  "version": "1.0.0",
+  "description": "MERN stack analytics dashboard for Blackcoffer business insights dataset",
+  "scripts": {
+    "install:server": "cd server && npm install",
+    "install:client": "cd client && npm install",
+    "install:all": "npm run install:server && npm run install:client",
+    "seed": "cd server && npm run seed",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": ["mern", "dashboard", "analytics", "mongodb", "react", "d3", "chartjs"],
+  "author": "",
+  "license": "MIT"
+}
