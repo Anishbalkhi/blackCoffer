@@ -9,29 +9,26 @@ import SectorVolumeChart from '../features/charts/SectorVolumeChart';
 import InsightDensityHeatmap from '../features/charts/InsightDensityHeatmap';
 import MetricCorrelationBubble from '../features/charts/MetricCorrelationBubble';
 
-function ChartPanel({ title, subtitle, badge, badgeVariant = '', children, span = 1, tall = false, featured = false }) {
-  let spanClass = '';
-  if (span === 2) spanClass = ' span-2';
-  if (span === 3) spanClass = ' span-3';
-
+function Loading() {
   return (
-    <div className={'chart-card' + (featured ? ' featured' : '') + spanClass}>
+    <div className="chart-spinner">
+      <div className="spinner"></div>
+    </div>
+  );
+}
+
+function Card({ title, subtitle, badge, badgeVariant, children, span, tall }) {
+  const cls = 'chart-card' + (span === 3 ? ' span-3' : '');
+  return (
+    <div className={cls}>
       <div className="chart-card-header">
         <div>
           <div className="chart-title">{title}</div>
           {subtitle && <div className="chart-subtitle">{subtitle}</div>}
         </div>
-        {badge && <span className={'chart-type-badge ' + badgeVariant}>{badge}</span>}
+        {badge && <span className={'chart-type-badge ' + (badgeVariant || '')}>{badge}</span>}
       </div>
       <div className={'chart-body' + (tall ? ' tall' : '')}>{children}</div>
-    </div>
-  );
-}
-
-function LoadingPlaceholder() {
-  return (
-    <div className="chart-spinner">
-      <div className="spinner"></div>
     </div>
   );
 }
@@ -63,9 +60,7 @@ export default function AppShell({
           <div className="error-screen-icon">⚠️</div>
           <div className="error-screen-title">Error: API Not Reachable</div>
           <p className="error-screen-msg">{errorMessage}</p>
-          <button className="retry-btn" onClick={() => window.location.reload()}>
-            Retry
-          </button>
+          <button className="retry-btn" onClick={() => window.location.reload()}>Retry</button>
         </div>
       </div>
     );
@@ -78,14 +73,11 @@ export default function AppShell({
           <span>📊</span>
           <span className="brand-name">Insight Dashboard</span>
         </a>
-
         <div className="topbar-actions">
           {!isLoading && (
-            <span className="record-count-pill">
-              {insightRecords.length} records
-            </span>
+            <span className="record-count-pill">{insightRecords.length} records</span>
           )}
-          <div className="live-dot" title="connected"></div>
+          <div className="live-dot"></div>
           <button
             className={'icon-btn filter-toggle-btn' + (filterDrawerOpen ? ' active' : '')}
             onClick={onDrawerToggle}
@@ -113,83 +105,42 @@ export default function AppShell({
       <main className="main-content">
         <div className="page-header">
           <h1 className="page-title">Business Insight Dashboard</h1>
-          <p className="page-subtitle">
-            View data on sectors, regions, topics and trends
-          </p>
+          <p className="page-subtitle">View data on sectors, regions, topics and trends</p>
         </div>
 
         <MetricsSummary aggregateMetrics={aggregateMetrics} isLoading={isStatsLoading} />
 
         <div className="chart-grid">
 
-          <ChartPanel
-            title="Topic Intensity Ranking"
-            subtitle="Top 10 topics by average intensity"
-            badge="Bar Chart"
-            tall
-          >
-            {isLoading ? <LoadingPlaceholder /> : <TopicIntensityRanking insightRecords={insightRecords} />}
-          </ChartPanel>
+          <Card title="Topic Intensity Ranking" subtitle="Top 10 topics by average intensity" badge="Bar Chart" tall>
+            {isLoading ? <Loading /> : <TopicIntensityRanking insightRecords={insightRecords} />}
+          </Card>
 
-          <ChartPanel
-            title="Likelihood Over Time"
-            subtitle="Average likelihood by start year"
-            badge="Line Chart"
-            badgeVariant="amber"
-          >
-            {isLoading ? <LoadingPlaceholder /> : <YearlyLikelihoodTrend insightRecords={insightRecords} />}
-          </ChartPanel>
+          <Card title="Likelihood Over Time" subtitle="Average likelihood by start year" badge="Line Chart" badgeVariant="amber">
+            {isLoading ? <Loading /> : <YearlyLikelihoodTrend insightRecords={insightRecords} />}
+          </Card>
 
-          <ChartPanel
-            title="Region Relevance"
-            subtitle="Average relevance per region"
-            badge="Radar"
-            badgeVariant="teal"
-          >
-            {isLoading ? <LoadingPlaceholder /> : <RegionRelevanceRadar insightRecords={insightRecords} />}
-          </ChartPanel>
+          <Card title="Region Relevance" subtitle="Average relevance per region" badge="Radar" badgeVariant="teal">
+            {isLoading ? <Loading /> : <RegionRelevanceRadar insightRecords={insightRecords} />}
+          </Card>
 
-          <ChartPanel
-            title="Country Frequency"
-            subtitle="Top 15 countries by number of records"
-            badge="Bar Chart"
-            tall
-          >
-            {isLoading ? <LoadingPlaceholder /> : <CountryFrequencyMap insightRecords={insightRecords} />}
-          </ChartPanel>
+          <Card title="Country Frequency" subtitle="Top 15 countries by number of records" badge="Bar Chart" tall>
+            {isLoading ? <Loading /> : <CountryFrequencyMap insightRecords={insightRecords} />}
+          </Card>
 
-          <ChartPanel
-            title="Sector Breakdown"
-            subtitle="Records per business sector"
-            badge="Polar Area"
-            badgeVariant="lav"
-            tall
-          >
-            {isLoading ? <LoadingPlaceholder /> : <SectorVolumeChart insightRecords={insightRecords} />}
-          </ChartPanel>
+          <Card title="Sector Breakdown" subtitle="Records per business sector" badge="Polar Area" badgeVariant="lav" tall>
+            {isLoading ? <Loading /> : <SectorVolumeChart insightRecords={insightRecords} />}
+          </Card>
 
-          <ChartPanel
-            title="Intensity vs Likelihood vs Relevance"
-            subtitle="Each bubble = one sector"
-            badge="Bubble Chart"
-            badgeVariant="amber"
-            span={3}
-            featured
-          >
-            {isLoading ? <LoadingPlaceholder /> : <MetricCorrelationBubble insightRecords={insightRecords} />}
-          </ChartPanel>
+          <Card title="Intensity vs Likelihood vs Relevance" subtitle="Each bubble = one sector" badge="Bubble Chart" badgeVariant="amber" span={3}>
+            {isLoading ? <Loading /> : <MetricCorrelationBubble insightRecords={insightRecords} />}
+          </Card>
 
-          <ChartPanel
-            title="Insight Density Heatmap"
-            subtitle="Intensity per topic vs likelihood bucket"
-            badge="Heatmap"
-            badgeVariant="teal"
-            span={3}
-          >
+          <Card title="Insight Density Heatmap" subtitle="Intensity per topic vs likelihood bucket" badge="Heatmap" badgeVariant="teal" span={3}>
             <div className="chart-body xtall">
-              {isLoading ? <LoadingPlaceholder /> : <InsightDensityHeatmap insightRecords={insightRecords} />}
+              {isLoading ? <Loading /> : <InsightDensityHeatmap insightRecords={insightRecords} />}
             </div>
-          </ChartPanel>
+          </Card>
 
         </div>
       </main>
