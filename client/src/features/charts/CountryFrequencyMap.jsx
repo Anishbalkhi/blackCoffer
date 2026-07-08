@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react';
 import {
-  Chart as ChartJS,
-  CategoryScale, LinearScale,
-  BarElement, Title, Tooltip, Legend,
+  Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
@@ -12,7 +10,6 @@ export default function CountryFrequencyMap({ insightRecords }) {
   const chartData = useMemo(() => {
     if (!insightRecords || insightRecords.length === 0) return null;
 
-    // count records per country
     const countryCount = {};
     insightRecords.forEach((record) => {
       const country = record.country || 'Unknown';
@@ -30,9 +27,10 @@ export default function CountryFrequencyMap({ insightRecords }) {
       datasets: [{
         label: 'Records',
         data: sorted.map(([, count]) => count),
-        backgroundColor: 'rgba(82, 183, 136, 0.7)',
-        borderColor: 'rgba(82, 183, 136, 1)',
+        backgroundColor: 'rgba(0, 121, 107, 0.75)',
+        borderColor: 'rgba(0, 121, 107, 1)',
         borderWidth: 1,
+        borderRadius: 3,
       }],
     };
   }, [insightRecords]);
@@ -52,10 +50,23 @@ export default function CountryFrequencyMap({ insightRecords }) {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
+      tooltip: {
+        backgroundColor: 'white',
+        titleColor: '#1e3a5f',
+        bodyColor: '#555',
+        borderColor: '#ddd',
+        borderWidth: 1,
+      },
     },
     scales: {
       x: {
-        title: { display: true, text: 'Number of Records' },
+        grid: { color: '#f0f0f0' },
+        ticks: { color: '#555', font: { size: 11 } },
+        title: { display: true, text: 'Number of Records', color: '#888', font: { size: 11 } },
+      },
+      y: {
+        grid: { display: false },
+        ticks: { color: '#333', font: { size: 10 } },
       },
     },
   };

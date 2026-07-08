@@ -1,132 +1,194 @@
 # Blackcoffer Analytics Dashboard
 
-A full-stack **MERN** analytics dashboard that visualizes 1000+ business insight records across topics, sectors, regions, and countries.
+A full-stack **MERN** analytics dashboard that visualises **1,000+ business insight records** across topics, sectors, regions, and countries - with 7 interactive charts and a powerful filter system.
 
-![Dashboard Preview](./preview.png)
+![Node.js](https://img.shields.io/badge/Node.js-18%2B-green?logo=node.js)
+![React](https://img.shields.io/badge/React-19-blue?logo=react)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-brightgreen?logo=mongodb)
+![Vite](https://img.shields.io/badge/Vite-8-purple?logo=vite)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow)
 
-## 🛠 Tech Stack
+---
+
+## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
 | Database | MongoDB Atlas + Mongoose |
-| Backend | Node.js + Express |
-| Frontend | React 18 + Vite |
-| Charts (standard) | Chart.js + react-chartjs-2 |
+| Backend | Node.js 18 + Express 4 |
+| Frontend | React 19 + Vite 8 |
+| Charts (standard) | Chart.js 4 + react-chartjs-2 |
 | Chart (heatmap) | D3.js v7 |
-| Multi-select filters | react-select |
+| Multi-select filters | react-select 5 |
 | HTTP client | Axios |
-| Styling | Vanilla CSS (design-token-based, dark/light) |
+| Styling | Vanilla CSS (design-token-based) |
+| Dev runner | concurrently |
 
-## 📁 Project Structure
+---
+
+## Project Structure
 
 ```
-blackcoffer-dashboard/
-├── server/
-│   ├── config/db.js          # MongoDB connection helper
+blackCoffer/
+├── server/                         # Express API server
+│   ├── config/
+│   │   └── db.js                   # MongoDB connection helper
 │   ├── controllers/
-│   │   └── dataController.js # getData / getFilters / getStats handlers
+│   │   └── dataController.js       # getInsightRecords / getFilterOptions / getAggregateMetrics
 │   ├── models/
-│   │   └── Insight.js        # Mongoose schema
+│   │   └── Insight.js              # Mongoose schema + indexes
 │   ├── routes/
-│   │   └── dataRoutes.js     # /api/data, /api/filters, /api/stats
-│   ├── seed.js               # One-time data import script
-│   ├── server.js             # Express app entry point
-│   ├── .env                  # 🔒 Not committed — see .env.example
+│   │   └── dataRoutes.js           # /api/data  /api/filters  /api/stats
+│   ├── seed.js                     # One-time data import script
+│   ├── server.js                   # Express app entry point
+│   ├── .env.example                # Template -- copy to .env and fill MONGO_URI
 │   └── package.json
-├── client/                   # Vite + React frontend
+│
+├── client/                         # Vite + React frontend
 │   └── src/
-│       ├── components/
-│       │   ├── Dashboard.jsx
-│       │   ├── FilterBar.jsx
-│       │   ├── SummaryCards.jsx
-│       │   └── charts/
-│       │       ├── IntensityByTopic.jsx
-│       │       ├── LikelihoodByYear.jsx
-│       │       ├── RelevanceByRegion.jsx
-│       │       ├── CountryDistribution.jsx
-│       │       ├── SectorBreakdown.jsx
-│       │       └── IntensityHeatmap.jsx  ← D3
-│       ├── services/api.js   # Axios wrappers
-│       ├── App.jsx           # Root: filter state + data fetching
-│       └── index.css         # Full design system (dark/light themes)
-├── jsondata.json             # Source dataset (1000 records)
-├── package.json              # Root scripts (dev, seed, install:all)
+│       ├── App.jsx                 # Root: filter state + parallel data fetching
+│       ├── main.jsx                # React DOM entry point
+│       ├── index.css               # Global design-system styles
+│       ├── features/
+│       │   ├── charts/
+│       │   │   ├── TopicIntensityRanking.jsx   # Horiz bar  -- top 10 topics by avg intensity
+│       │   │   ├── YearlyLikelihoodTrend.jsx   # Line+fill  -- avg likelihood by start year
+│       │   │   ├── RegionRelevanceRadar.jsx    # Radar      -- avg relevance per region
+│       │   │   ├── CountryFrequencyMap.jsx     # Horiz bar  -- top 15 countries by count
+│       │   │   ├── SectorVolumeChart.jsx       # Polar area -- record count per sector
+│       │   │   ├── MetricCorrelationBubble.jsx # Bubble     -- intensity x likelihood, size=relevance
+│       │   │   └── InsightDensityHeatmap.jsx   # D3 heatmap -- intensity per topic x likelihood bucket
+│       │   ├── filters/
+│       │   │   └── FilterPanel.jsx             # Slide-in filter drawer (react-select)
+│       │   └── overview/
+│       │       └── MetricsSummary.jsx          # 6-KPI summary cards
+│       ├── hooks/
+│       │   └── useInsightFilters.js            # Filter state management hook
+│       ├── layout/
+│       │   └── AppShell.jsx                    # Top-nav + 3-column chart grid
+│       └── services/
+│           └── insightApi.js                   # Axios wrappers for all API calls
+│
+├── jsondata.json                   # Source dataset (1,000 records)
+├── package.json                    # Root scripts: dev, seed, install:all, build
+├── .gitignore
 └── README.md
 ```
 
-## 🚀 Setup & Run
+---
+
+## Setup & Run
 
 ### Prerequisites
-- Node.js ≥ 18
-- MongoDB Atlas account (or local MongoDB)
+
+- **Node.js >= 18**
+- **MongoDB Atlas** account (free tier works) -- or a local MongoDB instance
 
 ### 1. Clone & Install
 
 ```bash
 git clone https://github.com/Anishbalkhi/blackCoffer.git
 cd blackCoffer
+
+# Install root + server + client dependencies in one step
 npm run install:all
 ```
 
 ### 2. Configure Environment
 
+**Server** -- copy the template and fill in your credentials:
+
 ```bash
-# Server
+# Linux / macOS
 cp server/.env.example server/.env
-# Edit server/.env and set MONGO_URI
+
+# Windows (PowerShell)
+Copy-Item server/.env.example server/.env
 ```
+
+Edit `server/.env`:
+
+```env
+MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/blackcoffer?retryWrites=true&w=majority
+PORT=5000
+```
+
+**Client** -- `client/.env` is pre-configured to point to `http://localhost:5000/api`. Only change this if your API runs on a different port.
 
 ### 3. Seed the Database
 
 ```bash
 npm run seed
-# → ✅ Inserted 1000 records into MongoDB
+# Inserted 1000 records into MongoDB
 ```
+
+> The seed script reads `jsondata.json`, normalises empty strings to `null` for numeric fields, clears existing records, and bulk-inserts all 1,000 entries.
 
 ### 4. Start Development Servers
 
 ```bash
-# Option A — run both together (from root)
+# Both servers concurrently (recommended)
 npm run dev
 
-# Option B — run separately
-# Terminal 1:
-cd server && npm run dev   # → http://localhost:5000
+# -- or run separately --
 
-# Terminal 2:
-cd client && npm run dev   # → http://localhost:5173
+# Terminal 1 -- API server  ->  http://localhost:5000
+cd server && npm run dev
+
+# Terminal 2 -- React app   ->  http://localhost:5173
+cd client && npm run dev
 ```
 
-## 🔌 API Endpoints
+### 5. Production Build
+
+```bash
+npm run build    # outputs to client/dist/
+```
+
+---
+
+## API Reference
+
+Base URL: `http://localhost:5000/api`
 
 ### `GET /api/health`
+
 Health check.
+
 ```json
-{ "success": true, "message": "Blackcoffer API is running 🚀" }
+{ "success": true, "message": "Blackcoffer API is running", "timestamp": "2024-01-01T00:00:00.000Z" }
 ```
 
-### `GET /api/stats`
-Aggregate KPI summary.
+---
 
-**Query params**: same as `/api/data`
+### `GET /api/filters`
+
+Returns distinct, sorted, non-empty values for every filter dropdown.
 
 ```json
 {
-  "stats": {
-    "total": 1000,
-    "avgIntensity": 6.48,
-    "avgLikelihood": 2.83,
-    "avgRelevance": 1.96,
-    "distinctCountries": 65,
-    "distinctTopics": 87
+  "success": true,
+  "filters": {
+    "end_years": [2017, 2018, 2019, 2020, 2021, 2025],
+    "topics":    ["battery", "coal", "gas", "oil", "..."],
+    "sectors":   ["Energy", "Environment", "Government", "..."],
+    "regions":   ["Africa", "Central America", "Northern America", "..."],
+    "pestles":   ["Economic", "Industries", "Political", "..."],
+    "sources":   ["EIA", "Reuters", "..."],
+    "swots":     ["Strengths", "Weaknesses", "..."],
+    "countries": ["India", "United States of America", "..."],
+    "cities":    ["..."]
   }
 }
 ```
 
-### `GET /api/data`
-Filtered records.
+---
 
-**Query params** (all optional, multi-select = comma-separated):
+### `GET /api/data`
+
+Returns filtered insight records.
+
+**Query parameters** (all optional; multi-select values are comma-separated):
 
 | Param | Example |
 |-------|---------|
@@ -139,49 +201,81 @@ Filtered records.
 | `endYear` | `endYear=2020` |
 
 ```json
-{ "success": true, "count": 87, "data": [...] }
+{ "success": true, "count": 87, "data": [ { "_id": "...", "topic": "gas", "intensity": 6, "..." } ] }
 ```
 
-### `GET /api/filters`
-Distinct sorted non-empty values for all filter dropdowns.
+---
+
+### `GET /api/stats`
+
+Aggregate KPI metrics -- supports the same filter params as `/api/data`.
+
 ```json
 {
-  "filters": {
-    "end_years": [2017, 2018, ...],
-    "topics": ["battery", "coal", ...],
-    "sectors": ["Energy", "Government", ...],
-    ...
+  "success": true,
+  "stats": {
+    "total": 1000,
+    "avgIntensity": 6.48,
+    "avgLikelihood": 2.83,
+    "avgRelevance": 1.96,
+    "distinctCountries": 65,
+    "distinctTopics": 87
   }
 }
 ```
 
-## 📊 Charts
+---
 
-| Chart | Type | Library |
-|-------|------|---------|
-| Intensity by Topic | Horizontal bar (top 10) | Chart.js |
-| Likelihood Over Time | Line + area fill | Chart.js |
-| Relevance by Region | Donut | Chart.js |
-| Country Distribution | Horizontal bar (top 15) | Chart.js |
-| Sector Breakdown | Vertical bar | Chart.js |
-| Intensity Heatmap | Topic × Likelihood heatmap | **D3.js** |
+## Charts
 
-## 🎨 Design
+| Chart | Type | Library | Description |
+|-------|------|---------|-------------|
+| **Topic Intensity Ranking** | Horizontal Bar | Chart.js | Top 10 topics ranked by average intensity score |
+| **Likelihood Over Time** | Line + Area Fill | Chart.js | Average likelihood trend by start year |
+| **Region Relevance** | Radar | Chart.js | Average relevance score for top 8 regions |
+| **Country Frequency** | Horizontal Bar | Chart.js | Top 15 countries by number of insight records |
+| **Sector Breakdown** | Polar Area | Chart.js | Record volume distribution across business sectors |
+| **Metric Correlation** | Bubble | Chart.js | Intensity (X) x Likelihood (Y), bubble size = avg Relevance per sector |
+| **Insight Density Heatmap** | Heatmap | **D3.js** | Average intensity per topic x likelihood bucket (1-5) |
 
-- **Dark / Light** theme toggle (CSS custom properties)
-- Glassmorphism cards with gradient accents
-- Collapsible filter sidebar
-- Responsive grid: 2 columns → 1 column on mobile
-- Loading skeletons for KPI cards, spinners per chart
+---
 
-## 🧠 Key Design Decisions
+## Design Highlights
 
-1. **Single API call per filter change** — all charts derive from one `/api/data` response rather than each chart fetching independently, keeping charts in sync and reducing network overhead.
+- **Sticky top navigation** with live-indicator dot and dynamic record-count pill
+- **Slide-in filter drawer** with backdrop -- 7 multi-select filter categories
+- **6-column KPI summary bar** -- Total Records, Avg Intensity, Avg Likelihood, Avg Relevance, Countries, Topics
+- **3-column responsive chart grid** -> 2 columns on tablets -> 1 column on mobile
+- **Loading states** -- shimmer skeletons on KPI cards, spinner per chart
+- **Error screen** with one-click retry if the API is unreachable
 
-2. **`/api/filters` endpoint** — distinct values come from MongoDB `distinct()` at runtime, not hardcoded. Adding a new topic/country to the DB automatically appears in the dropdowns.
+---
 
-3. **No pagination on `/api/data`** — 1000 records is small enough to return in full. At scale, move aggregations server-side into MongoDB's aggregation pipeline and paginate.
+## Key Design Decisions
 
-4. **`$in` for multi-select** — filter arrays are sent as comma-separated strings and parsed server-side into `$in` queries, e.g. `topic=gas,oil` → `{ topic: { $in: ["gas", "oil"] } }`.
+1. **Single fetch per filter change** -- all charts share one `/api/data` response so every chart stays consistent without extra network calls.
 
-5. **Empty strings → null** — many records have blank region/country/PESTLE. The seed script normalizes these so the schema stays clean.
+2. **Runtime filter options** -- `/api/filters` uses MongoDB `distinct()` live, so adding new data automatically populates dropdowns without any code change.
+
+3. **No pagination on `/api/data`** -- 1,000 records fits in one JSON response. At scale, push aggregations into MongoDB's pipeline and add cursor-based pagination.
+
+4. **`$in` for multi-select filters** -- comma-separated query strings (`topic=gas,oil`) are parsed server-side into `{ topic: { $in: ["gas","oil"] } }` MongoDB queries.
+
+5. **Empty strings to null in seed** -- blank numeric fields (`intensity`, `likelihood`, `relevance`, etc.) are normalised to `null` so `$avg` aggregations are unaffected by spurious zero values.
+
+6. **D3 tooltip hoisted before event handlers** -- the tooltip D3 selection is declared before the `.on('mouseover')` callback that references it, preventing a temporal dead-zone reference error.
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Commit with conventional commits: `git commit -m "feat: add my feature"`
+4. Push and open a Pull Request
+
+---
+
+## License
+
+MIT (c) [Anish Balkhi](https://github.com/Anishbalkhi)

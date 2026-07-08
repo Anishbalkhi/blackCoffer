@@ -15,9 +15,7 @@ export default function TopicIntensityRanking({ insightRecords }) {
     const topicMap = {};
     insightRecords.forEach((record) => {
       if (!record.topic || record.intensity == null) return;
-      if (!topicMap[record.topic]) {
-        topicMap[record.topic] = { total: 0, count: 0 };
-      }
+      if (!topicMap[record.topic]) topicMap[record.topic] = { total: 0, count: 0 };
       topicMap[record.topic].total += record.intensity;
       topicMap[record.topic].count += 1;
     });
@@ -34,9 +32,10 @@ export default function TopicIntensityRanking({ insightRecords }) {
       datasets: [{
         label: 'Avg Intensity',
         data: sorted.map((d) => parseFloat(d.avg.toFixed(2))),
-        backgroundColor: 'rgba(44, 62, 107, 0.7)',
-        borderColor: 'rgba(44, 62, 107, 1)',
+        backgroundColor: 'rgba(30, 58, 95, 0.75)',
+        borderColor: 'rgba(30, 58, 95, 1)',
         borderWidth: 1,
+        borderRadius: 3,
       }],
     };
   }, [insightRecords]);
@@ -56,10 +55,23 @@ export default function TopicIntensityRanking({ insightRecords }) {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
+      tooltip: {
+        backgroundColor: 'white',
+        titleColor: '#1e3a5f',
+        bodyColor: '#555',
+        borderColor: '#ddd',
+        borderWidth: 1,
+      },
     },
     scales: {
       x: {
-        title: { display: true, text: 'Average Intensity' },
+        grid: { color: '#f0f0f0' },
+        ticks: { color: '#555', font: { size: 11 } },
+        title: { display: true, text: 'Average Intensity', color: '#888', font: { size: 11 } },
+      },
+      y: {
+        grid: { display: false },
+        ticks: { color: '#333', font: { size: 11 } },
       },
     },
   };

@@ -77,6 +77,9 @@ export default function InsightDensityHeatmap({ insightRecords }) {
       .domain([d3.min(validValues) || 0, d3.max(validValues) || 10])
       .interpolator(d3.interpolateBlues);
 
+    // tooltip (must be declared before event handlers that reference it)
+    const tooltip = d3.select(wrapperRef.current).select('.heatmap-tooltip');
+
     // draw cells
     g.selectAll('rect')
       .data(cellList)
@@ -138,8 +141,6 @@ export default function InsightDensityHeatmap({ insightRecords }) {
 
     // y axis label
     svg.append('text').attr('transform', 'rotate(-90)').attr('x', -(margin.top + innerH / 2)).attr('y', 14).attr('text-anchor', 'middle').attr('fill', '#666').attr('font-size', 11).text('Likelihood Bucket');
-
-    const tooltip = d3.select(wrapperRef.current).select('.heatmap-tooltip');
   }, [heatmapData]);
 
   if (!heatmapData) {

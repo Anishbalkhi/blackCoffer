@@ -31,9 +31,11 @@ export default function YearlyLikelihoodTrend({ insightRecords }) {
       datasets: [{
         label: 'Avg Likelihood',
         data: years.map((yr) => parseFloat((yearMap[yr].total / yearMap[yr].count).toFixed(2))),
-        borderColor: '#4a90d9',
-        backgroundColor: 'rgba(74, 144, 217, 0.1)',
-        pointBackgroundColor: '#4a90d9',
+        borderColor: '#1e3a5f',
+        backgroundColor: 'rgba(30, 58, 95, 0.08)',
+        pointBackgroundColor: '#1e3a5f',
+        pointRadius: 4,
+        pointHoverRadius: 6,
         borderWidth: 2,
         fill: true,
         tension: 0.3,
@@ -54,14 +56,25 @@ export default function YearlyLikelihoodTrend({ insightRecords }) {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { display: true },
+      legend: { labels: { color: '#555', font: { size: 11 } } },
+      tooltip: {
+        backgroundColor: 'white',
+        titleColor: '#1e3a5f',
+        bodyColor: '#555',
+        borderColor: '#ddd',
+        borderWidth: 1,
+      },
     },
     scales: {
       x: {
-        title: { display: true, text: 'Year' },
+        grid: { color: '#f0f0f0' },
+        ticks: { color: '#555', font: { size: 11 } },
+        title: { display: true, text: 'Year', color: '#888', font: { size: 11 } },
       },
       y: {
-        title: { display: true, text: 'Avg Likelihood' },
+        grid: { color: '#f0f0f0' },
+        ticks: { color: '#555', font: { size: 11 } },
+        title: { display: true, text: 'Avg Likelihood', color: '#888', font: { size: 11 } },
       },
     },
   };

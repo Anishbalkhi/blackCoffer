@@ -1,15 +1,25 @@
 import React, { useMemo } from 'react';
 import {
-  Chart as ChartJS,
-  RadialLinearScale,
-  ArcElement,
-  Tooltip,
-  Legend,
-  PolarAreaController,
+  Chart as ChartJS, RadialLinearScale, ArcElement, Tooltip, Legend, PolarAreaController,
 } from 'chart.js';
 import { PolarArea } from 'react-chartjs-2';
 
 ChartJS.register(RadialLinearScale, ArcElement, Tooltip, Legend, PolarAreaController);
+
+const COLORS = [
+  'rgba(30, 58, 95, 0.75)',
+  'rgba(0, 121, 107, 0.75)',
+  'rgba(230, 81, 0, 0.75)',
+  'rgba(106, 27, 154, 0.75)',
+  'rgba(21, 101, 192, 0.75)',
+  'rgba(46, 125, 50, 0.75)',
+  'rgba(198, 40, 40, 0.75)',
+  'rgba(0, 96, 100, 0.75)',
+  'rgba(74, 20, 140, 0.75)',
+  'rgba(13, 71, 161, 0.75)',
+  'rgba(1, 87, 155, 0.75)',
+  'rgba(0, 77, 64, 0.75)',
+];
 
 export default function SectorVolumeChart({ insightRecords }) {
   const chartData = useMemo(() => {
@@ -31,21 +41,9 @@ export default function SectorVolumeChart({ insightRecords }) {
       labels: sorted.map(([sector]) => sector),
       datasets: [{
         data: sorted.map(([, count]) => count),
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.6)',
-          'rgba(54, 162, 235, 0.6)',
-          'rgba(255, 206, 86, 0.6)',
-          'rgba(75, 192, 192, 0.6)',
-          'rgba(153, 102, 255, 0.6)',
-          'rgba(255, 159, 64, 0.6)',
-          'rgba(199, 199, 199, 0.6)',
-          'rgba(83, 102, 255, 0.6)',
-          'rgba(40, 159, 64, 0.6)',
-          'rgba(210, 99, 132, 0.6)',
-          'rgba(54, 80, 235, 0.6)',
-          'rgba(255, 50, 86, 0.6)',
-        ],
-        borderWidth: 1,
+        backgroundColor: COLORS.slice(0, sorted.length),
+        borderColor: 'white',
+        borderWidth: 2,
       }],
     };
   }, [insightRecords]);
@@ -65,7 +63,20 @@ export default function SectorVolumeChart({ insightRecords }) {
     plugins: {
       legend: {
         position: 'right',
-        labels: { font: { size: 10 }, boxWidth: 10 },
+        labels: { color: '#333', font: { size: 10 }, boxWidth: 12, padding: 8 },
+      },
+      tooltip: {
+        backgroundColor: 'white',
+        titleColor: '#1e3a5f',
+        bodyColor: '#555',
+        borderColor: '#ddd',
+        borderWidth: 1,
+      },
+    },
+    scales: {
+      r: {
+        grid: { color: '#e8e8e8' },
+        ticks: { color: '#888', backdropColor: 'transparent', font: { size: 9 } },
       },
     },
   };

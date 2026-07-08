@@ -1,36 +1,28 @@
 import React, { useMemo } from 'react';
-import {
-  Chart as ChartJS,
-  LinearScale,
-  PointElement,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { Chart as ChartJS, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
 import { Bubble } from 'react-chartjs-2';
 
 ChartJS.register(LinearScale, PointElement, Tooltip, Legend);
 
-// colors for different sectors
 const COLORS = [
-  'rgba(255, 99, 132, 0.7)',
-  'rgba(54, 162, 235, 0.7)',
-  'rgba(255, 206, 86, 0.7)',
-  'rgba(75, 192, 192, 0.7)',
-  'rgba(153, 102, 255, 0.7)',
-  'rgba(255, 159, 64, 0.7)',
-  'rgba(199, 50, 132, 0.7)',
-  'rgba(54, 80, 235, 0.7)',
-  'rgba(40, 180, 80, 0.7)',
-  'rgba(255, 80, 50, 0.7)',
-  'rgba(100, 200, 200, 0.7)',
-  'rgba(180, 100, 255, 0.7)',
+  'rgba(30, 58, 95, 0.8)',
+  'rgba(0, 121, 107, 0.8)',
+  'rgba(230, 81, 0, 0.8)',
+  'rgba(106, 27, 154, 0.8)',
+  'rgba(21, 101, 192, 0.8)',
+  'rgba(46, 125, 50, 0.8)',
+  'rgba(198, 40, 40, 0.8)',
+  'rgba(0, 96, 100, 0.8)',
+  'rgba(74, 20, 140, 0.8)',
+  'rgba(13, 71, 161, 0.8)',
+  'rgba(1, 87, 155, 0.8)',
+  'rgba(0, 77, 64, 0.8)',
 ];
 
 export default function MetricCorrelationBubble({ insightRecords }) {
   const datasets = useMemo(() => {
     if (!insightRecords || insightRecords.length === 0) return null;
 
-    // group by sector
     const sectorData = {};
     insightRecords.forEach((record) => {
       if (record.intensity == null && record.likelihood == null && record.relevance == null) return;
@@ -61,8 +53,8 @@ export default function MetricCorrelationBubble({ insightRecords }) {
         r: Math.max(5, Math.min(25, item.avgRelevance * 5)),
       }],
       backgroundColor: COLORS[index % COLORS.length],
-      borderColor: COLORS[index % COLORS.length].replace('0.7', '1'),
-      borderWidth: 1,
+      borderColor: 'white',
+      borderWidth: 1.5,
     }));
   }, [insightRecords]);
 
@@ -81,23 +73,42 @@ export default function MetricCorrelationBubble({ insightRecords }) {
     plugins: {
       legend: {
         position: 'right',
-        labels: { font: { size: 10 }, boxWidth: 10 },
+        labels: { color: '#333', font: { size: 10 }, boxWidth: 12, padding: 6, usePointStyle: true },
+      },
+      tooltip: {
+        backgroundColor: 'white',
+        titleColor: '#1e3a5f',
+        bodyColor: '#555',
+        borderColor: '#ddd',
+        borderWidth: 1,
+        callbacks: {
+          title: (items) => items[0]?.dataset?.label ?? '',
+          label: (ctx) => [
+            ` Avg Intensity: ${ctx.parsed.x}`,
+            ` Avg Likelihood: ${ctx.parsed.y}`,
+            ` Bubble size = Avg Relevance`,
+          ],
+        },
       },
     },
     scales: {
       x: {
-        title: { display: true, text: 'Avg Intensity' },
+        grid: { color: '#f0f0f0' },
+        ticks: { color: '#555', font: { size: 11 } },
+        title: { display: true, text: 'Avg Intensity', color: '#888', font: { size: 11 } },
       },
       y: {
-        title: { display: true, text: 'Avg Likelihood' },
+        grid: { color: '#f0f0f0' },
+        ticks: { color: '#555', font: { size: 11 } },
+        title: { display: true, text: 'Avg Likelihood', color: '#888', font: { size: 11 } },
       },
     },
   };
 
   return (
     <div style={{ position: 'relative', height: '100%' }}>
-      <p style={{ fontSize: '12px', color: '#888', marginBottom: '5px' }}>
-        * Bubble size = Avg Relevance
+      <p style={{ fontSize: '11px', color: '#aaa', marginBottom: '6px' }}>
+        Bubble size = Avg Relevance
       </p>
       <Bubble data={{ datasets }} options={options} />
     </div>

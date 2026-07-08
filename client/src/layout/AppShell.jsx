@@ -17,8 +17,9 @@ function Loading() {
   );
 }
 
-function Card({ title, subtitle, badge, badgeVariant, children, span, tall }) {
+function Card({ title, subtitle, badge, badgeVariant, children, span, tall, extraTall }) {
   const cls = 'chart-card' + (span === 3 ? ' span-3' : '');
+  const bodyClass = 'chart-body' + (extraTall ? ' xtall' : tall ? ' tall' : '');
   return (
     <div className={cls}>
       <div className="chart-card-header">
@@ -28,7 +29,7 @@ function Card({ title, subtitle, badge, badgeVariant, children, span, tall }) {
         </div>
         {badge && <span className={'chart-type-badge ' + (badgeVariant || '')}>{badge}</span>}
       </div>
-      <div className={'chart-body' + (tall ? ' tall' : '')}>{children}</div>
+      <div className={bodyClass}>{children}</div>
     </div>
   );
 }
@@ -136,10 +137,8 @@ export default function AppShell({
             {isLoading ? <Loading /> : <MetricCorrelationBubble insightRecords={insightRecords} />}
           </Card>
 
-          <Card title="Insight Density Heatmap" subtitle="Intensity per topic vs likelihood bucket" badge="Heatmap" badgeVariant="teal" span={3}>
-            <div className="chart-body xtall">
-              {isLoading ? <Loading /> : <InsightDensityHeatmap insightRecords={insightRecords} />}
-            </div>
+          <Card title="Insight Density Heatmap" subtitle="Intensity per topic vs likelihood bucket" badge="Heatmap" badgeVariant="teal" span={3} extraTall>
+            {isLoading ? <Loading /> : <InsightDensityHeatmap insightRecords={insightRecords} />}
           </Card>
 
         </div>
