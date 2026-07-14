@@ -4,7 +4,7 @@ import { Bubble } from 'react-chartjs-2';
 
 ChartJS.register(LinearScale, PointElement, Tooltip, Legend);
 
-const COLORS = [
+const SECTOR_COLORS = [
   'rgba(30, 58, 95, 0.8)',
   'rgba(0, 121, 107, 0.8)',
   'rgba(230, 81, 0, 0.8)',
@@ -20,27 +20,34 @@ const COLORS = [
 ];
 
 export default function MetricCorrelationBubble({ insightRecords }) {
+
   const datasets = useMemo(() => {
     if (!insightRecords || insightRecords.length === 0) return null;
 
-    const sectorData = {};
+    const sectorMap = {};
     insightRecords.forEach((record) => {
       if (record.intensity == null && record.likelihood == null && record.relevance == null) return;
+
       const sector = record.sector || 'Other';
-      if (!sectorData[sector]) {
-        sectorData[sector] = { intensityTotal: 0, likelihoodTotal: 0, relevanceTotal: 0, count: 0 };
+
+      if (!sectorMap[sector]) {
+        sectorMap[sector] = {
+          intensityTotal:  0, intensityCount:  0,
+          likelihoodTotal: 0, likelihoodCount: 0,
+          relevanceTotal:  0, relevanceCount:  0,
+        };
       }
-      if (record.intensity != null) sectorData[sector].intensityTotal += record.intensity;
-      if (record.likelihood != null) sectorData[sector].likelihoodTotal += record.likelihood;
-      if (record.relevance != null) sectorData[sector].relevanceTotal += record.relevance;
-      sectorData[sector].count += 1;
+
+      if (record.intensity  != null) { sectorMap[sector].intensityTotal  += record.intensity;  sectorMap[sector].intensityCount++;  }
+      if (record.likelihood != null) { sectorMap[sector].likelihoodTotal += record.likelihood; sectorMap[sector].likelihoodCount++; }
+      if (record.relevance  != null) { sectorMap[sector].relevanceTotal  += record.relevance;  sectorMap[sector].relevanceCount++;  }
     });
 
-    const sectorList = Object.entries(sectorData).map(([sector, data]) => ({
+    const sectorList = Object.entries(sectorMap).map(([sector, data]) => ({
       sector,
-      avgIntensity: data.count > 0 ? data.intensityTotal / data.count : 0,
-      avgLikelihood: data.count > 0 ? data.likelihoodTotal / data.count : 0,
-      avgRelevance: data.count > 0 ? data.relevanceTotal / data.count : 0,
+      avgIntensity:  data.intensityCount  > 0 ? data.intensityTotal  / data.intensityCount  : 0,
+      avgLikelihood: data.likelihoodCount > 0 ? data.likelihoodTotal / data.likelihoodCount : 0,
+      avgRelevance:  data.relevanceCount  > 0 ? data.relevanceTotal  / data.relevanceCount  : 0,
     }));
 
     if (sectorList.length === 0) return null;
@@ -52,7 +59,7 @@ export default function MetricCorrelationBubble({ insightRecords }) {
         y: parseFloat(item.avgLikelihood.toFixed(2)),
         r: Math.max(5, Math.min(25, item.avgRelevance * 5)),
       }],
-      backgroundColor: COLORS[index % COLORS.length],
+      backgroundColor: SECTOR_COLORS[index % SECTOR_COLORS.length],
       borderColor: 'white',
       borderWidth: 1.5,
     }));

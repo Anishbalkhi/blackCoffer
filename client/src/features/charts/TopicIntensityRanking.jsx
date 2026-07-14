@@ -9,19 +9,26 @@ import { Bar } from 'react-chartjs-2';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function TopicIntensityRanking({ insightRecords }) {
+
   const chartData = useMemo(() => {
     if (!insightRecords || insightRecords.length === 0) return null;
 
     const topicMap = {};
     insightRecords.forEach((record) => {
       if (!record.topic || record.intensity == null) return;
-      if (!topicMap[record.topic]) topicMap[record.topic] = { total: 0, count: 0 };
+
+      if (!topicMap[record.topic]) {
+        topicMap[record.topic] = { total: 0, count: 0 };
+      }
       topicMap[record.topic].total += record.intensity;
       topicMap[record.topic].count += 1;
     });
 
     const sorted = Object.entries(topicMap)
-      .map(([topic, data]) => ({ topic, avg: data.total / data.count }))
+      .map(([topic, data]) => ({
+        topic,
+        avg: data.total / data.count,
+      }))
       .sort((a, b) => b.avg - a.avg)
       .slice(0, 10);
 

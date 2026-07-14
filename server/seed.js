@@ -15,22 +15,23 @@ const seed = async () => {
 
   const raw = fs.readFileSync(dataPath, 'utf-8');
   const records = JSON.parse(raw);
-
   console.log(`Loaded ${records.length} records from jsondata.json`);
 
-  const normalized = records.map((r) => ({
-    ...r,
-    end_year: r.end_year === '' || r.end_year === undefined ? null : Number(r.end_year),
-    start_year: r.start_year === '' || r.start_year === undefined ? null : Number(r.start_year),
-    intensity: r.intensity === '' || r.intensity === undefined ? null : Number(r.intensity),
-    likelihood: r.likelihood === '' || r.likelihood === undefined ? null : Number(r.likelihood),
-    relevance: r.relevance === '' || r.relevance === undefined ? null : Number(r.relevance),
-  }));
+  const cleanedRecords = records.map((record) => {
+    return {
+      ...record,
+      end_year:   record.end_year   === '' || record.end_year   == null ? null : Number(record.end_year),
+      start_year: record.start_year === '' || record.start_year == null ? null : Number(record.start_year),
+      intensity:  record.intensity  === '' || record.intensity  == null ? null : Number(record.intensity),
+      likelihood: record.likelihood === '' || record.likelihood == null ? null : Number(record.likelihood),
+      relevance:  record.relevance  === '' || record.relevance  == null ? null : Number(record.relevance),
+    };
+  });
 
   await Insight.deleteMany({});
   console.log('Cleared existing collection');
 
-  const inserted = await Insight.insertMany(normalized, { ordered: false });
+  const inserted = await Insight.insertMany(cleanedRecords, { ordered: false });
   console.log(`Inserted ${inserted.length} records into MongoDB`);
 
   process.exit(0);

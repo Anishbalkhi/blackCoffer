@@ -2,14 +2,14 @@ import { useState } from 'react';
 
 const defaultFilters = {
   endYear: null,
-  topic: [],
-  sector: [],
-  region: [],
-  pestle: [],
-  source: [],
-  swot: [],
+  topic:   [],
+  sector:  [],
+  region:  [],
+  pestle:  [],
+  source:  [],
+  swot:    [],
   country: [],
-  city: [],
+  city:    [],
 };
 
 export const useInsightFilters = () => {
@@ -27,12 +27,12 @@ export const useInsightFilters = () => {
   }
 
   let activeFilterCount = 0;
-  if (activeFilters.endYear) activeFilterCount += 1;
-  if (activeFilters.topic && activeFilters.topic.length > 0) activeFilterCount += 1;
-  if (activeFilters.sector && activeFilters.sector.length > 0) activeFilterCount += 1;
-  if (activeFilters.region && activeFilters.region.length > 0) activeFilterCount += 1;
-  if (activeFilters.pestle && activeFilters.pestle.length > 0) activeFilterCount += 1;
-  if (activeFilters.source && activeFilters.source.length > 0) activeFilterCount += 1;
+  if (activeFilters.endYear)                            activeFilterCount += 1;
+  if (activeFilters.topic   && activeFilters.topic.length   > 0) activeFilterCount += 1;
+  if (activeFilters.sector  && activeFilters.sector.length  > 0) activeFilterCount += 1;
+  if (activeFilters.region  && activeFilters.region.length  > 0) activeFilterCount += 1;
+  if (activeFilters.pestle  && activeFilters.pestle.length  > 0) activeFilterCount += 1;
+  if (activeFilters.source  && activeFilters.source.length  > 0) activeFilterCount += 1;
   if (activeFilters.country && activeFilters.country.length > 0) activeFilterCount += 1;
 
   return { activeFilters, activeFilterCount, setFilter, resetFilters };
